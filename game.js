@@ -1,4 +1,4 @@
-        <script>
+ <script>
         const player = document.getElementById('player');
         const ai = document.getElementById('ai');
         let playerPos = { x: 50, y: 50 };

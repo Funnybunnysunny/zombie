@@ -1,34 +1,59 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombie Shooter Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- Your JavaScript should go inside these script tags -->
+    <script>
+        const player = document.getElementById('player');
+        const ai = document.getElementById('ai');
+        let playerPos = { x: 50, y: 50 };
+        let aiPos = { x: 400, y: 400 };
+        const playerStepSize = 10; 
+        const aiStepSize = 20;
+        const gameAreaSize = 500;
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+        // Move the player with arrow keys
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'ArrowUp': if (playerPos.y - playerStepSize >= 0) playerPos.y -= playerStepSize; break;
+                case 'ArrowDown': if (playerPos.y + playerStepSize <= gameAreaSize - 40) playerPos.y += playerStepSize; break;
+                case 'ArrowLeft': if (playerPos.x - playerStepSize >= 0) playerPos.x -= playerStepSize; break;
+                case 'ArrowRight': if (playerPos.x + playerStepSize <= gameAreaSize - 40) playerPos.x += playerStepSize; break;
+            }
+            updatePositions();
+        });
 
-let player = { x: canvas.width / 2, y: canvas.height - 50, width: 20, height: 20, color: 'blue', speed: 5 };
-let zombies = [];
-let bullets = [];
-let score = 0;
-let spawnRate = 2000;
-let gameOver = false;
+        setInterval(() => {
+            moveAITowardsPlayer();
+        }, 5000);
 
-// Player Movement
-document.addEventListener('keydown', movePlayer);
+        // Update player and AI positions
+        function updatePositions() {
+            player.style.left = `${playerPos.x}px`;
+            player.style.top = `${playerPos.y}px`;
+            ai.style.left = `${aiPos.x}px`;
+            ai.style.top = `${aiPos.y}px`;
+        }
 
-// Shooting mechanic
-document.addEventListener('click', shoot);
-
-// Main game loop
-function gameLoop() {
-    if (!gameOver) {
-        update();
-        draw();
-        requestAnimationFrame(gameLoop);
-    } else {
-        displayGameOver();
-    }
-}
-
-// Start the game loop
-gameLoop();
-
-// Functions: update, draw, zombie logic, collision detection, etc.
+        // Move AI step by step towards the player
+        function moveAITowardsPlayer() {
+            const dx = playerPos.x - aiPos.x;
+            const dy = playerPos.y - aiPos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance > 0) {
+                aiPos.x += (dx / distance) * aiStepSize;
+                aiPos.y += (dy / distance) * aiStepSize;
+            }
+            updatePositions();
+        }
+        updatePositions();
+    </script>
+</body>
+</html>
